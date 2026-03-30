@@ -24,7 +24,7 @@ import com.google.cloud.datastore.KeyFactory;
 public class CreateAccountResource {
 
 
-	private static final Logger LOG = Logger.getLogger(CreateAccountResource.class.getName()); 
+	private static final Logger LOG = Logger.getLogger(LoginResource.class.getName()); 
 	private static final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
   private static final KeyFactory userKeyFactory = datastore.newKeyFactory().setKind("User");
 
