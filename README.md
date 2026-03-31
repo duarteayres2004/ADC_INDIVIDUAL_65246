@@ -1,2 +1,9 @@
-# ADC_INDIVIDUAL_65246
+# ADC_INDIVIDUAL_65246 
 Individual Evaluation for ADC 25/26
+
+Student : Duarte Ayres 65246
+
+
+
+
+
