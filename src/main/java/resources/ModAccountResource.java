@@ -1,12 +1,11 @@
 package resources;
 
-import java.util.logging.Logger;
-
 import resources.data.general.ErrorResponse;
 import resources.data.general.SuccessResponse;
 import resources.data.general.ErrorCodes;
 import resources.data.general.VerifyToken;
 import resources.data.ModAccountData;
+import resources.data.general.MessageResult;
 
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -89,10 +88,10 @@ public class ModAccountResource {
 
       datastore.put(updated.build());
 
-      return Response.ok(new SuccessResponse("Updated successfully")).build();
+      return Response.ok(new SuccessResponse(new MessageResult("Updated successfully"))).build();
 
     } catch (Exception e) {
-      return Response.ok(new ErrorResponse(ErrorCodes.FORBIDDEN, ErrorCodes.MSG_FORBIDDEN)).build();
+      return Response.ok(new ErrorResponse(ErrorCodes.INTERNAL_ERROR, ErrorCodes.MSG_INTERNAL_ERROR)).build();
     }
 
   }

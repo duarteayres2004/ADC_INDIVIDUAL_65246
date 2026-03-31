@@ -1,5 +1,7 @@
 package resources.data;
 
+import resources.data.io.LoginInput;
+
 public class LoginData {
     public LoginInput input;
 

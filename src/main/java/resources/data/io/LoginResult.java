@@ -1,4 +1,4 @@
-package resources.data;
+package resources.data.io;
 
 import auth.AuthToken;
 

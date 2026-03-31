@@ -1,4 +1,3 @@
-
 package resources.data.general;
 
 public class ErrorResponse {

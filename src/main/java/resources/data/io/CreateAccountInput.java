@@ -1,6 +1,6 @@
-package resources.data;
+package resources.data.io;
 
-public class CreateAccountData {
+public class CreateAccountInput {
     public String username;
     public String password;
     public String confirmation;
@@ -8,10 +8,10 @@ public class CreateAccountData {
     public String address;
     public String role;
 
-    public CreateAccountData() {
+    public CreateAccountInput() {
     }
 
-    public boolean validRegistration() {
+    public boolean validInput() {
         return username != null && !username.isBlank() &&
                 password != null && !password.isBlank() &&
                 confirmation != null && password.equals(confirmation) &&

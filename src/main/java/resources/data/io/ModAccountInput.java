@@ -1,14 +1,15 @@
-package resources.data;
+package resources.data.io;
 
-public class ModifyAccountInput {
+public class ModAccountInput {
     public String username;
-    public ModifyAttributes attributes;
+    public ModAccountAttributes attributes;
 
-    public ModifyAccountInput() {}
+    public ModAccountInput() {
+    }
 
     public boolean validInput() {
         return username != null && !username.isBlank()
-            && attributes != null
-            && attributes.hasAtLeastOneField();
+                && attributes != null
+                && attributes.hasAtLeastOneField();
     }
 }

@@ -1,4 +1,4 @@
-package resources.data;
+package resources.data.io;
 
 import java.util.List;
 import resources.data.general.UserInfo;

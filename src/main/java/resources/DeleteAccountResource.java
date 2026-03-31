@@ -3,13 +3,11 @@ package resources;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import auth.AuthToken;
-
 import resources.data.general.ErrorResponse;
 import resources.data.general.SuccessResponse;
 import resources.data.general.ErrorCodes;
 import resources.data.general.VerifyToken;
-import resources.data.CreateAccountResult;
+import resources.data.general.MessageResult;
 import resources.data.DeleteAccountData;
 
 import jakarta.ws.rs.POST;
@@ -18,7 +16,6 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
 
 import com.google.cloud.datastore.Datastore;
 import com.google.cloud.datastore.DatastoreOptions;
@@ -43,7 +40,7 @@ public class DeleteAccountResource {
   public Response deleteAccount(DeleteAccountData data) {
     try {
       if (data == null || !data.validInput()) {
-        return Response.ok(new ErrorResponse(ErrorCodes.INVALID_INPUT, ErrorCodes.MSG_INVALID_INPUT)).build();
+        return Response.ok(new ErrorResponse(ErrorCodes.FORBIDDEN, ErrorCodes.MSG_FORBIDDEN)).build();
       }
 
       Entity sessionEntity = VerifyToken.getValidSession(data.token);
@@ -57,10 +54,10 @@ public class DeleteAccountResource {
 
       String expectedRole = sessionEntity.getString("role");
       if (!VerifyToken.isAllowedRole(expectedRole, new String[] { "ADMIN" })) {
-        return Response.ok(new ErrorResponse(ErrorCodes.TOKEN_EXPIRED, ErrorCodes.MSG_TOKEN_EXPIRED)).build();
+        return Response.ok(new ErrorResponse(ErrorCodes.UNAUTHORIZED, ErrorCodes.MSG_UNAUTHORIZED)).build();
       }
 
-      String username = data.username.trim().toLowerCase();
+      String username = data.input.username.trim().toLowerCase();
       Key userKey = userKeyFactory.newKey(username);
       Entity userEntity = datastore.get(userKey);
 
@@ -69,11 +66,11 @@ public class DeleteAccountResource {
       }
 
       datastore.delete(userKey);
-      return Response.ok(new SuccessResponse(message)).build();
+      return Response.ok(new SuccessResponse(new MessageResult(message))).build();
 
     } catch (Exception e) {
       LOG.log(Level.SEVERE, "Error in deleteAccount", e);
-      return Response.ok(new ErrorResponse(ErrorCodes.FORBIDDEN, ErrorCodes.MSG_FORBIDDEN)).build();
+      return Response.ok(new ErrorResponse(ErrorCodes.INTERNAL_ERROR, ErrorCodes.MSG_INTERNAL_ERROR)).build();
 
     }
   }

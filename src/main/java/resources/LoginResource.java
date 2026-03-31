@@ -1,15 +1,12 @@
 package resources;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.UUID;
 
 import auth.AuthToken;
 
 import resources.data.general.*;
+import resources.data.io.LoginResult;
 import resources.data.LoginData;
-import resources.data.LoginResult;
-
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Consumes;
@@ -29,7 +26,8 @@ public class LoginResource {
 
     public static final long TOKEN_EXPIRATION_MS = 15 * 60 * 1000;
 
-    private static final Logger LOG = Logger.getLogger(LoginResource.class.getName());
+    // private static final Logger LOG =
+    // Logger.getLogger(LoginResource.class.getName());
     private static final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
     private static final KeyFactory userKeyFactory = datastore.newKeyFactory().setKind("User");
 
@@ -41,13 +39,13 @@ public class LoginResource {
     public Response doLogin(LoginData data) {
         try {
 
-            LOG.fine("Login attempt by user: " + data.username);
+            // LOG.fine("Login attempt by user: " + data.username);
 
             if (data == null || !data.validLogin()) {
                 return Response.ok(new ErrorResponse(ErrorCodes.INVALID_INPUT, ErrorCodes.MSG_INVALID_INPUT)).build();
             }
 
-            String username = data.username.trim().toLowerCase();
+            String username = data.input.username.trim().toLowerCase();
 
             Key userKey = userKeyFactory.newKey(username);
             Entity userEntity = datastore.get(userKey);
@@ -57,7 +55,7 @@ public class LoginResource {
             }
 
             String realPassword = userEntity.getString("password");
-            if (realPassword == null || !realPassword.equals(data.password)) {
+            if (realPassword == null || !realPassword.equals(data.input.password)) {
                 return Response
                         .ok(new ErrorResponse(ErrorCodes.INVALID_CREDENTIALS, ErrorCodes.MSG_INVALID_CREDENTIALS))
                         .build();
@@ -83,7 +81,7 @@ public class LoginResource {
             return Response.ok(new SuccessResponse(new LoginResult(token))).build();
 
         } catch (Exception e) {
-            return Response.ok(new ErrorResponse("500", "An unexpected error occurred.")).build();
+            return Response.ok(new ErrorResponse(ErrorCodes.INTERNAL_ERROR, ErrorCodes.MSG_INTERNAL_ERROR)).build();
         }
     }
 
