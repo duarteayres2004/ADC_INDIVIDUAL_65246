@@ -63,9 +63,8 @@ public class ShowUsersResource {
       List<UserInfo> users = new ArrayList<>();
       while (results.hasNext()) {
         Entity userEntity = results.next();
-        String username = userEntity.getKey().getName();
+        String username = userEntity.getKey().toString();
         String role = userEntity.getString("role");
-
         users.add(new UserInfo(username, role));
       }
 

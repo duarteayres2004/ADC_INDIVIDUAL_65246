@@ -1,3 +1,4 @@
+
 package resources;
 
 import resources.data.general.ErrorCodes;
@@ -25,7 +26,12 @@ public class CreateAccountResource {
 
 	// private static final Logger LOG =
 	// Logger.getLogger(LoginResource.class.getName());
-	private static final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
+	// private static final Datastore datastore =
+	// DatastoreOptions.getDefaultInstance().getService();
+	private static final Datastore datastore = DatastoreOptions.newBuilder()
+			.setProjectId("individual-eval-adc")
+			.build()
+			.getService();
 	private static final KeyFactory userKeyFactory = datastore.newKeyFactory().setKind("User");
 
 	public CreateAccountResource() {

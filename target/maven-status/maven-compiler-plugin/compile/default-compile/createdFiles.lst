@@ -13,6 +13,7 @@ resources\data\ShowAuthData.class
 resources\LogoutResource.class
 resources\data\io\ChangeURoleInput.class
 resources\LoginResource.class
+resources\PingResource.class
 resources\data\general\MessageResult.class
 resources\data\ModAccountData.class
 resources\data\io\CreateAccountResult.class
