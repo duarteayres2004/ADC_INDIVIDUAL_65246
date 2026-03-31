@@ -1,4 +1,5 @@
 package resources.data;
+
 public class CreateAccountResult {
 
     public String username;

@@ -1,6 +1,6 @@
 package resources.data;
 
-import java.auth.AuthToken;
+import auth.AuthToken;
 
 public class LoginResult {
     public AuthToken token;

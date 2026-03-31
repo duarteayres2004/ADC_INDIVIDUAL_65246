@@ -1,7 +1,10 @@
+package resources;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.UUID;
+
+import auth.AuthToken;
 
 import resources.data.general.*;
 import resources.data.LoginData;
@@ -13,7 +16,6 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
 
 import com.google.cloud.datastore.Datastore;
 import com.google.cloud.datastore.DatastoreOptions;
@@ -68,7 +70,7 @@ public class LoginResource {
             String tokenId = UUID.randomUUID().toString();
 
             AuthToken token = new AuthToken(tokenId, username, role, issuedAt, expiresAt);
-            Entity SessionEntity = Entity.newBuilder(datastore.getKeyFactory().setKind("Session").newKey(tokenId))
+            Entity SessionEntity = Entity.newBuilder(datastore.newKeyFactory().setKind("Session").newKey(tokenId))
                     .set("username", username)
                     .set("role", role)
                     .set("issuedAt", issuedAt)
