@@ -1,8 +1,8 @@
-package java.auth;
+package auth;
 
 public class AuthToken {
     public String tokenId;
-    public String userId;
+    public String username;
     public String role;
     public long issuedAt;
     public long expiresAt;
@@ -10,9 +10,9 @@ public class AuthToken {
     public AuthToken() {
     }
 
-    public AuthToken(String tokenId, String userId, String role, long issuedAt, long expiresAt) {
+    public AuthToken(String tokenId, String username, String role, long issuedAt, long expiresAt) {
         this.tokenId = tokenId;
-        this.userId = userId;
+        this.username = username;
         this.role = role;
         this.issuedAt = issuedAt;
         this.expiresAt = expiresAt;
