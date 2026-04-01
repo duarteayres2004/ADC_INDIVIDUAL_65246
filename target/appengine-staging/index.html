@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ADC 25/26 Individual Evaluation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f4f6f8;
+      color: #222;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+    }
+
+    p {
+      margin-top: 0;
+      color: #555;
+    }
+
+    .top,
+    .box {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+      font-family: Consolas, monospace;
+    }
+
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    pre {
+      background: #111827;
+      color: #e5e7eb;
+      padding: 12px;
+      border-radius: 8px;
+      min-height: 120px;
+      overflow: auto;
+      font-size: 13px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .small {
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>ADC 25/26 Tester</h1>
+  <p>Duarte Ayres : 65246</p>
+
+  <div class="top">
+    <label for="baseUrl">Cloud REST Base URL</label>
+    <input id="baseUrl" value="https://individual-eval-adc.oa.r.appspot.com/rest" />
+
+    <label for="tokenBox">Saved Token JSON</label>
+    <textarea id="tokenBox" placeholder='Paste token here after login, or it will be filled automatically'></textarea>
+    <button onclick="formatToken()">Format Token</button>
+  </div>
+
+  <div class="grid">
+    <div class="box">
+      <h3>Create Account</h3>
+      <input id="ca_username" placeholder="Username (user@adc.pt)" />
+      <input id="ca_password" type="password" placeholder="Password" />
+      <input id="ca_confirmation" type="password" placeholder="Confirmation" />
+      <input id="ca_phone" placeholder="Phone" />
+      <input id="ca_address" placeholder="Address" />
+      <select id="ca_role">
+        <option>USER</option>
+        <option>BOFFICER</option>
+        <option>ADMIN</option>
+      </select>
+      <button onclick="createAccount()">Create Account</button>
+      <pre id="out_createaccount"></pre>
+    </div>
+
+    <div class="box">
+      <h3>Login</h3>
+      <input id="login_username" placeholder="Username" />
+      <input id="login_password" type="password" placeholder="Password" />
+      <button onclick="login()">Login</button>
+      <pre id="out_login"></pre>
+    </div>
+
+    <div class="box">
+      <h3>Show Users</h3>
+      <div class="small">Uses saved token.</div>
+      <button onclick="showUsers()">Show Users</button>
+      <pre id="out_showusers"></pre>
+    </div>
+
+    <div class="box">
+      <h3>Delete Account</h3>
+      <input id="delete_username" placeholder="Username to delete" />
+      <button onclick="deleteAccount()">Delete Account</button>
+      <pre id="out_deleteaccount"></pre>
+    </div>
+
+    <div class="box">
+      <h3>Modify Account Attributes</h3>
+      <input id="mod_username" placeholder="Username" />
+      <input id="mod_phone" placeholder="Phone" />
+      <input id="mod_address" placeholder="Address" />
+      <button onclick="modAccount()">Modify Account</button>
+      <pre id="out_modaccount"></pre>
+    </div>
+
+    <div class="box">
+      <h3>Show Authenticated Sessions</h3>
+      <div class="small">Uses saved token.</div>
+      <button onclick="showAuthSessions()">Show Sessions</button>
+      <pre id="out_showauthsessions"></pre>
+    </div>
+
+    <div class="box">
+      <h3>Show User Role</h3>
+      <input id="role_username" placeholder="Username" />
+      <button onclick="showUserRole()">Show User Role</button>
+      <pre id="out_showuserrole"></pre>
+    </div>
+
+    <div class="box">
+      <h3>Change User Role</h3>
+      <input id="change_role_username" placeholder="Username" />
+      <select id="change_role_new">
+        <option>USER</option>
+        <option>BOFFICER</option>
+        <option>ADMIN</option>
+      </select>
+      <button onclick="changeUserRole()">Change Role</button>
+      <pre id="out_changeuserrole"></pre>
+    </div>
+
+    <div class="box">
+      <h3>Change User Password</h3>
+      <input id="pwd_username" placeholder="Username" />
+      <input id="pwd_old" type="password" placeholder="Old Password" />
+      <input id="pwd_new" type="password" placeholder="New Password" />
+      <button onclick="changeUserPassword()">Change Password</button>
+      <pre id="out_changeuserpwd"></pre>
+    </div>
+
+    <div class="box">
+      <h3>Logout</h3>
+      <input id="logout_username" placeholder="Username" />
+      <button onclick="logoutUser()">Logout</button>
+      <pre id="out_logout"></pre>
+    </div>
+  </div>
+
+  <script>
+    function baseUrl() {
+      return document.getElementById('baseUrl').value.trim().replace(/\/$/, '');
+    }
+
+    function getToken() {
+      const raw = document.getElementById('tokenBox').value.trim();
+      if (!raw) return null;
+      return JSON.parse(raw);
+    }
+
+    function formatToken() {
+      const area = document.getElementById('tokenBox');
+      if (!area.value.trim()) return;
+      area.value = JSON.stringify(JSON.parse(area.value), null, 2);
+    }
+
+    function showResult(id, data) {
+      document.getElementById(id).textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+    }
+
+    async function send(path, body, outId) {
+      try {
+        const res = await fetch(baseUrl() + path, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+
+        const text = await res.text();
+        try {
+          return showResult(outId, { httpStatus: res.status, body: JSON.parse(text) });
+        } catch {
+          return showResult(outId, { httpStatus: res.status, body: text });
+        }
+      } catch (e) {
+        showResult(outId, 'Request failed: ' + e);
+      }
+    }
+
+    function createAccount() {
+      send('/createaccount', {
+        input: {
+          username: document.getElementById('ca_username').value.trim(),
+          password: document.getElementById('ca_password').value,
+          confirmation: document.getElementById('ca_confirmation').value,
+          phone: document.getElementById('ca_phone').value.trim(),
+          address: document.getElementById('ca_address').value.trim(),
+          role: document.getElementById('ca_role').value
+        }
+      }, 'out_createaccount');
+    }
+
+    async function login() {
+      const username = document.getElementById('login_username').value.trim();
+      const password = document.getElementById('login_password').value;
+
+      try {
+        const res = await fetch(baseUrl() + '/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ input: { username, password } })
+        });
+
+        const text = await res.text();
+        let parsed;
+        try {
+          parsed = JSON.parse(text);
+        } catch {
+          parsed = text;
+        }
+
+        showResult('out_login', { httpStatus: res.status, body: parsed });
+
+        if (parsed && parsed.data && parsed.data.token) {
+          document.getElementById('tokenBox').value = JSON.stringify(parsed.data.token, null, 2);
+        }
+      } catch (e) {
+        showResult('out_login', 'Request failed: ' + e);
+      }
+    }
+
+    function showUsers() {
+      send('/showusers', { input: {}, token: getToken() }, 'out_showusers');
+    }
+
+    function deleteAccount() {
+      send('/deleteaccount', {
+        input: { username: document.getElementById('delete_username').value.trim() },
+        token: getToken()
+      }, 'out_deleteaccount');
+    }
+
+    function modAccount() {
+      send('/modaccount', {
+        input: {
+          username: document.getElementById('mod_username').value.trim(),
+          attributes: {
+            phone: document.getElementById('mod_phone').value.trim(),
+            address: document.getElementById('mod_address').value.trim()
+          }
+        },
+        token: getToken()
+      }, 'out_modaccount');
+    }
+
+    function showAuthSessions() {
+      send('/showauthsessions', { input: {}, token: getToken() }, 'out_showauthsessions');
+    }
+
+    function showUserRole() {
+      send('/showuserrole', {
+        input: { username: document.getElementById('role_username').value.trim() },
+        token: getToken()
+      }, 'out_showuserrole');
+    }
+
+    function changeUserRole() {
+      send('/changeuserrole', {
+        input: {
+          username: document.getElementById('change_role_username').value.trim(),
+          newRole: document.getElementById('change_role_new').value
+        },
+        token: getToken()
+      }, 'out_changeuserrole');
+    }
+
+    function changeUserPassword() {
+      send('/changeuserpwd', {
+        input: {
+          username: document.getElementById('pwd_username').value.trim(),
+          oldPassword: document.getElementById('pwd_old').value,
+          newPassword: document.getElementById('pwd_new').value
+        },
+        token: getToken()
+      }, 'out_changeuserpwd');
+    }
+
+    async function logoutUser() {
+      const body = {
+        input: { username: document.getElementById('logout_username').value.trim() },
+        token: getToken()
+      };
+
+      try {
+        const res = await fetch(baseUrl() + '/logout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+
+        const text = await res.text();
+        let parsed;
+        try {
+          parsed = JSON.parse(text);
+        } catch {
+          parsed = text;
+        }
+
+        showResult('out_logout', { httpStatus: res.status, body: parsed });
+
+        if (parsed && parsed.status === 'success') {
+          document.getElementById('tokenBox').value = '';
+        }
+      } catch (e) {
+        showResult('out_logout', 'Request failed: ' + e);
+      }
+    }
+  </script>
+</body>
+
+</html>
