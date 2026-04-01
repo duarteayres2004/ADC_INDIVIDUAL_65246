@@ -22,12 +22,15 @@ import com.google.cloud.datastore.DatastoreOptions;
 import com.google.cloud.datastore.Entity;
 import com.google.cloud.datastore.Key;
 import com.google.cloud.datastore.KeyFactory;
+import com.google.cloud.datastore.Query;
+import com.google.cloud.datastore.QueryResults;
+import com.google.cloud.datastore.StructuredQuery;
 
 @Path("/deleteaccount")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class DeleteAccountResource {
 
-  private static final Logger LOG = Logger.getLogger(LoginResource.class.getName());
+  private static final Logger LOG = Logger.getLogger(DeleteAccountResource.class.getName());
   private static final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
   private static final KeyFactory userKeyFactory = datastore.newKeyFactory().setKind("User");
   private static final String message = "Account deleted successfully";
@@ -66,6 +69,16 @@ public class DeleteAccountResource {
       }
 
       datastore.delete(userKey);
+
+      Query<Entity> sessionQuery = Query.newEntityQueryBuilder().setKind("Session")
+          .setFilter(StructuredQuery.PropertyFilter.eq("username", username)).build();
+
+      QueryResults<Entity> sessionResults = datastore.run(sessionQuery);
+      while (sessionResults.hasNext()) {
+        Entity nextEntity = sessionResults.next();
+        Key nextKey = nextEntity.getKey();
+        datastore.delete(nextKey);
+      }
       return Response.ok(new SuccessResponse(new MessageResult(message))).build();
 
     } catch (Exception e) {

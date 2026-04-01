@@ -58,12 +58,13 @@ public class ShowUsersResource {
       }
 
       Query<Entity> query = Query.newEntityQueryBuilder().setKind("User").build();
+
       QueryResults<Entity> results = datastore.run(query);
 
       List<UserInfo> users = new ArrayList<>();
       while (results.hasNext()) {
         Entity userEntity = results.next();
-        String username = userEntity.getKey().toString();
+        String username = userEntity.getString("username");
         String role = userEntity.getString("role");
         users.add(new UserInfo(username, role));
       }
